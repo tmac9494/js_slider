@@ -74,7 +74,7 @@ class Slider {
 	}
 	generateButtons = () => {
 		// generate button stylsheet
-		const btnCss = '.slider_btn {display:block;position:absolute;top:50%;transform:translateY(-50%);width:50px;height:160px;background:none;border:none;outline:none;cursor:pointer;z-index: 10;} .slider_btn svg {fill:rgba(0,0,0,0.32)} .slider_circ_btn {width: 15px;height:15px;border-radius:30px;background:rgba(0,0,0,0.32);display: inline-block;border:none;outline:none;margin-right:8px;cursor:pointer;} .slider_circ_btn:hover, .slider_circ_btn.active {background: rgba(0,0,0,0.55)}';
+		const btnCss = '.slider_btn {display:block;position:absolute;top:50%;transform:translateY(-50%);width:50px;height:160px;background:none;border:none;outline:none;cursor:pointer;z-index: 10;} .slider_btn svg {fill:rgba(0,0,0,0.32)} .slider_circ_btn {width: 15px;height:15px;border-radius:30px;background:rgba(0,0,0,0.32);display: inline-block;border:none;outline:none;margin-right:8px;cursor:pointer;} .slider_circ_btn:hover, .slider_circ_btn.active {background: rgba(0,0,0,0.55)} @media (max-width: 768px) {.slider_btn svg {fill: rgba(0,0,0,0) !important;}}';
 		const css = '.slider_btn:hover svg {fill: rgba(0,0,0,0.55)} .slider_btn:focus, .slider_circ_btn:focus {outline: none} .' + this.slideClassName + '{transition: left .42s, transform .42s}' + btnCss;
 		const style = document.createElement('style');
 		if (style.styleSheet) style.styleSheet.cssText = css
