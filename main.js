@@ -14,8 +14,10 @@ class Slider {
     this.timeoutFunc = null;
     this.hover = false;
 		this.initialize();
+    ['changeSlide', 'changeIndex', 'updateClasses', 'generateButtons']
+    .forEach(fName =>  this[fName].bind(this) );
 	}
-	changeSlide = increment => {
+	changeSlide(increment) {
 			const newIndex = this.index + increment;
 			if (newIndex <= this.total - 1 && newIndex >= 0) {
 				const currentSlide = this.slides[this.index].element;
@@ -31,7 +33,7 @@ class Slider {
         this.changeIndex(newIndex > this.total - 1 ? 0 : this.total - 1);
       }
 	}
-  changeIndex = newIndex => {
+  changeIndex(newIndex) {
     let greaterThan = newIndex > this.index;
     if (newIndex !== this.index) {
       for (let i = 0;i < this.slides.length;i++) {
@@ -46,12 +48,12 @@ class Slider {
       this.updateClasses();
     }
   }
-  updateClasses = () => {
+  updateClasses() {
     for (let i = 0;i < this.circBtns.length;i++) {
       this.circBtns[i].className = 'slider_circ_btn' + (i === this.index ? ' active' : '');
     }
   }
-	initialize = () => {
+	initialize() {
 		// hide and size slides/container
 		let slides = [];
 		for (let i = 0;i < this.slides.length;i++) {
@@ -72,7 +74,7 @@ class Slider {
 		// generate buttons
 		this.generateButtons();
 	}
-	generateButtons = () => {
+	generateButtons() {
 		// generate button stylsheet
 		const btnCss = '.slider_btn {display:block;position:absolute;top:50%;transform:translateY(-50%);width:50px;height:160px;background:none;border:none;outline:none;cursor:pointer;z-index: 10;} .slider_btn svg {fill:rgba(0,0,0,0.32)} .slider_circ_btn {width: 15px;height:15px;border-radius:30px;background:rgba(0,0,0,0.32);display: inline-block;border:none;outline:none;margin-right:8px;cursor:pointer;} .slider_circ_btn:hover, .slider_circ_btn.active {background: rgba(0,0,0,0.55)} @media (max-width: 768px) {.slider_btn svg {fill: rgba(0,0,0,0) !important;}}';
 		const css = '.slider_btn:hover svg {fill: rgba(0,0,0,0.55)} .slider_btn:focus, .slider_circ_btn:focus {outline: none} .' + this.slideClassName + '{transition: left .42s, transform .42s}' + btnCss;
@@ -89,7 +91,9 @@ class Slider {
 		buttons[0].innerHTML = '<svg style="' + svgStyle + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M217.9 256L345 129c9.4-9.4 9.4-24.6 0-33.9-9.4-9.4-24.6-9.3-34 0L167 239c-9.1 9.1-9.3 23.7-.7 33.1L310.9 417c4.7 4.7 10.9 7 17 7s12.3-2.3 17-7c9.4-9.4 9.4-24.6 0-33.9L217.9 256z"/></svg>';
 		buttons[1].innerHTML = '<svg style="' + svgStyle + '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M294.1 256L167 129c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.3 34 0L345 239c9.1 9.1 9.3 23.7.7 33.1L201.1 417c-4.7 4.7-10.9 7-17 7s-12.3-2.3-17-7c-9.4-9.4-9.4-24.6 0-33.9l127-127.1z"/></svg>';
 		buttons[0].className = 'slider_btn slider_btn_left';
+    buttons[0].setAttribute('aria-label', 'change slide backwards');
 		buttons[1].className = 'slider_btn slider_btn_right';
+    buttons[1].setAttribute('aria-label', 'change slide forwards');
 		buttons[0].style.cssText = 'left:0;right:auto;';
 		buttons[1].style.cssText = 'right:0;left:auto;';
 		this.container.appendChild(buttons[0]);
@@ -102,6 +106,7 @@ class Slider {
       let circBtn = document.createElement('button');
       circBtn.className = 'slider_circ_btn' + (i === 0 ? ' active' : '');
       circBtn.addEventListener('click', () => this.changeIndex(i));
+      circBtn.setAttribute('aria-label', 'slide ' + (i + 1));
       this.circBtns.push(circBtn);
       circleButtonContainer.appendChild(circBtn);
     }
@@ -116,16 +121,16 @@ class Slider {
     this.container.addEventListener('mouseleave', () => {
       if (this.hover) {
         this.hover = false;
-        this.timeoutFunc = setTimeout(this.timeoutEvent, 4000);
+        this.timeoutFunc = setTimeout(() => this.timeoutEvent(this), 4000);
       }
     })
-    if (!this.hover && isElementInView(this.container)) this.timeoutFunc = setTimeout(this.timeoutEvent, 4000);
+    if (!this.hover && isElementInView(this.container)) this.timeoutFunc = setTimeout(() => this.timeoutEvent(this), 4000);
 	}
-  timeoutEvent = () => {
-    this.changeSlide(1);
-    if (isElementInView(this.container)) this.timeoutFunc = setTimeout(this.timeoutEvent, 4000)
+  timeoutEvent(thisRef) {
+    thisRef.changeSlide(1);
+    if (isElementInView(thisRef.container)) thisRef.timeoutFunc = setTimeout(() => thisRef.timeoutEvent(thisRef), 4000)
   }
-	sizeContainer = () => {
+	sizeContainer() {
 		this.container.style.height = this.currentSlide().height + 100 + 'px';
 	}
 }
